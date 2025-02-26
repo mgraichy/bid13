@@ -1,5 +1,15 @@
 <?php declare(strict_types=1);
 
+function logToFilesystem(string $fileToSave, string $jsonContents): void
+{
+    $overrideToSaveInFilesystem = 3;
+    error_log(
+        $jsonContents,
+        $overrideToSaveInFilesystem,
+        $fileToSave
+    );
+}
+
 function setUpCurl(string $auth, string $apiUrl, string $phoneNumber): array
 {
     $headers = [
@@ -29,7 +39,7 @@ function setUpCurl(string $auth, string $apiUrl, string $phoneNumber): array
  * Checks the validity of the number with TeleSign's Phone ID.
  *
  * @param array $curlRequest
- * @return boolean|null The null is if the given number did not belong to any of the options
+ * @return boolean|null The null is if the given number did not belong to any of the returned options
  */
 function isValidPhoneNumber(array $curlRequest): ?bool
 {
@@ -42,6 +52,20 @@ function isValidPhoneNumber(array $curlRequest): ?bool
     // If there's an error with cURL itself (and not the TeleSign domain):
     $curlError = curl_errno($ch);
     if ($curlError) {
+        $fileToSave = dirname(__DIR__, 1) . '/logs/error-logs.log';
+        $jsonContents = json_encode(
+            [
+                'method' => __METHOD__,
+                'cURL status' => $curlError,
+                'message' => curl_error($ch)
+            ],
+            JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES
+        ) . "\n";
+
+        logToFilesystem($fileToSave, $jsonContents);
+
+        curl_close($ch);
+
         return false;
     }
 
@@ -67,23 +91,4 @@ function isValidPhoneNumber(array $curlRequest): ?bool
 
     return null;
 }
-
-
-// As this is a POST request, I'd rather include a body (and not put the number in the path):
-$apiUrl = 'https://rest-ww.telesign.com/v1/phoneid';
-$phoneNumber = '15145534258';
-// $customerId = '<ID>';
-$customerId = '5172B3B5-23B4-4D23-8475-72E342561A23';
-// $apiKey = '<API_KEY>';
-$apiKey = 'oAfhXKHJJw9d9YcOCYhl3pNJenj1G8Juii7m5dlmji0s0UV2NE5mUWOWjVAMIfKJ8yrlCDNdj2R/YlD+KpSlmg==';
-// https://developer.telesign.com/enterprise/docs/authentication#basic-authentication:
-$preAuth = base64_encode(mb_convert_encoding("$customerId:$apiKey", 'UTF-8', mb_list_encodings()));
-$auth = mb_convert_encoding($preAuth, 'UTF-8', mb_list_encodings());
-$curlRequest = setUpCurl($auth, $apiUrl, $phoneNumber);
-var_dump($curlRequest);
-$curlResponse = isValidPhoneNumber($curlRequest);
-
-// $result = isValidPhoneNumber($apiUrl, $phoneNumber, $auth);
-// var_dump($result);
-
 
