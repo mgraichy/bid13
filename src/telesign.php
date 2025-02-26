@@ -52,7 +52,7 @@ function isValidPhoneNumber(array $curlRequest): ?bool
     // If there's an error with cURL itself (and not the TeleSign domain):
     $curlError = curl_errno($ch);
     if ($curlError) {
-        $fileToSave = dirname(__DIR__, 1) . '/logs/error-logs.log';
+        $fileToSave = dirname(__DIR__, 1) . '/logs/errors.log';
         $jsonContents = json_encode(
             [
                 'method' => __METHOD__,
