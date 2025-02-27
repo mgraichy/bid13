@@ -10,7 +10,7 @@ class Psr4AutoloaderClass
         spl_autoload_register([$this, 'loadClassFromFQCN']);
     }
 
-    public function addPrefixedBaseDirectoryForThisClass(string $namespacePrefix, string $baseDirectory): void
+    public function addPrefixedBaseDirectoryForThisClassSet(string $namespacePrefix, string $baseDirectory): void
     {
         $namespacePrefix = trim($namespacePrefix, '\\') . '\\';
         $baseDirectory = rtrim($baseDirectory, DIRECTORY_SEPARATOR) . '/';
@@ -45,7 +45,7 @@ class Psr4AutoloaderClass
 
     protected function loadFile(string $namespacePrefix, string $classWithPossiblePostfix): bool|string
     {
-        // Check if we've saved the current $namespacePrefix with $this->addPrefixedBaseDirectoryForThisClass()
+        // Check if we've saved the current $namespacePrefix with $this->addPrefixedBaseDirectoryForThisClassSet()
         // in the protected $prefixedBaseDirs array:
         if (!isset($this->prefixedBaseDirs[$namespacePrefix])) {
             return false;
@@ -58,7 +58,7 @@ class Psr4AutoloaderClass
                     str_replace('\\', '/', $classWithPossiblePostfix) .
                     '.php';
 
-            // It's possible that we added the class in $this->addPrefixedBaseDirectoryForThisClass(),
+            // It's possible that we added the class in $this->addPrefixedBaseDirectoryForThisClassSet(),
             // but the directories and / or class doesn't actually exist in the filesystem:
             if (file_exists($file)) {
                 require $file;
@@ -74,5 +74,6 @@ $autoloader = new \Psr4AutoloaderClass;
 $autoloader->registerNewAutoloader();
 $namespacePrefix = '\\App\\';
 $baseDirWithPrefix = __DIR__;
-$autoloader->addPrefixedBaseDirectoryForThisClass($namespacePrefix, $baseDirWithPrefix . '/src');
-// $autoloader->addPrefixedBaseDirectoryForThisClass($namespacePrefix, $baseDirWithPrefix . '/tests');
+$autoloader->addPrefixedBaseDirectoryForThisClassSet($namespacePrefix, $baseDirWithPrefix . '/src');
+// For the testing directory:
+// $autoloader->addPrefixedBaseDirectoryForThisClassSet($namespacePrefix, $baseDirWithPrefix . '/tests');

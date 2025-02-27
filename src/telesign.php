@@ -15,7 +15,6 @@ function setUpCurl(string $auth, string $apiUrl, string $phoneNumber): array
     $headers = [
         "Authorization: Basic $auth",
         'Accept: application/json',
-        // Documentation says this JSON request API only accepts UTF-8, so make this explicit:
         'Content-Type: application/json; charset=utf-8',
     ];
 
@@ -39,7 +38,7 @@ function setUpCurl(string $auth, string $apiUrl, string $phoneNumber): array
  * Checks the validity of the number with TeleSign's Phone ID.
  *
  * @param array $curlRequest
- * @return boolean|null The null is if the given number did not belong to any of the returned options
+ * @return boolean|null null if number did not belong to any of the returned options
  */
 function isValidPhoneNumber(array $curlRequest): ?bool
 {
@@ -91,4 +90,3 @@ function isValidPhoneNumber(array $curlRequest): ?bool
 
     return null;
 }
-

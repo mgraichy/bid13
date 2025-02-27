@@ -4,17 +4,15 @@ namespace App;
 
 class ScatterPlot
 {
-    protected string $file;
     protected \GdImage $scatterPlot;
 
     public function __construct(
-        $file,
+        protected string $file,
         protected array $data = [],
         protected int $width = 600,
         protected int $height = 600,
         protected int $margin = 50
-    )
-    {
+    ) {
         if (!file_exists($file)) {
             echo basename($file) . ' does not exist..';
             return;
@@ -25,10 +23,10 @@ class ScatterPlot
 
     public function handle(): ScatterPlot
     {
-        // Convert the CSV into an array:
         $handle = fopen($this->file, 'r');
         // remove the CSV header:
         $header = fgetcsv($handle);
+        // Convert the CSV into an array:
         while (($row = fgetcsv($handle)) !== false) {
             $this->data[] = [
                 'x' => intval($row[0]),
@@ -51,7 +49,6 @@ class ScatterPlot
 
         $black = imagecolorallocate($this->scatterPlot, 0, 0, 0);
         $offWhite = imagecolorallocate($this->scatterPlot, 237, 235, 233); //#e0dedc
-        //$yellow   = imagecolorallocate($this->scatterPlot, 239, 184, 22);
         $yellow = imagecolorallocate($this->scatterPlot, 255, 200, 45);
         // Change GdImage's background:
         imagefill($this->scatterPlot, 0, 0, $offWhite);
@@ -88,7 +85,6 @@ class ScatterPlot
             $centerY = ($this->height - $this->margin) - ($normalizedY * $totalVerticalSpace);
 
             $widthOfEllipse = $heightOfEllipse = 3;
-            $widthOfEllipse = $heightOfEllipse = 3;
             $centerX = intval($centerX);
             $centerY = intval($centerY);
             imagefilledellipse($this->scatterPlot, $centerX, $centerY, $widthOfEllipse, $heightOfEllipse, $yellow);
@@ -97,7 +93,7 @@ class ScatterPlot
         return $this;
     }
 
-    public function printScatterPlotToClient()
+    public function printScatterPlotToClient(): void
     {
         // send out the image (no need to delete it from mem since PHP8):
         header("Content-Type: image/png");
