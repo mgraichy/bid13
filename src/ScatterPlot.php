@@ -8,10 +8,10 @@ class ScatterPlot
 
     public function __construct(
         protected string $file,
-        protected array $data = [],
         protected int $width = 600,
         protected int $height = 600,
-        protected int $margin = 50
+        protected int $margin = 50,
+        protected array $data = []
     ) {
         if (!file_exists($file)) {
             echo basename($file) . ' does not exist..';

@@ -5,7 +5,7 @@ require realpath(__DIR__ . '/../src/telesign.php');
 
 use App\ScatterPlot;
 
-/**
+
 // Keep the CSV out of the public directory:
 $file = dirname(__DIR__, 1) . '/php-quiz-question-2-out.csv';
 $scatterPlot = new ScatterPlot($file);
@@ -13,8 +13,9 @@ $scatterPlot = new ScatterPlot($file);
 $scatterPlot->handle()
     ->createScatterPlot()
     ->printScatterPlotToClient();
-*/
 
+
+/**
 // As this is a POST request, I'd rather include a body (and not put the number in the path):
 $apiUrl = 'https://rest-ww.telesign.com/v1/phoneid';
 $phoneNumber = '<COUNTRY_CODE_AND_NUMBER>';
@@ -34,3 +35,4 @@ if ($curlResponse) {
 } else {
     echo 'Number not available';
 }
+*/
